@@ -10,9 +10,12 @@ class Car:
     def refuel(self, gallons):
         tank = self.fuel_level + gallons
         if tank <= self.fuel_capacity:
-            return f"{(self.fuel_level + gallons) *10 /10} gallons in your tank!"
+            self.fuel_level += gallons
+            return f"{(self.fuel_level) *10 /10} gallons in your tank!"
         elif tank > self.fuel_capacity:
-            return f"Only {(self.fuel_capacity - self.fuel_level) *10 /10} added to your tank!"
+            dont_overfill = self.fuel_capacity - self.fuel_level
+            self.fuel_level += (dont_overfill)
+            return f"Only {(dont_overfill) *10 /10} added to your tank!"
 
     def get_range(self):
         max_range = (((self.fuel_level * self.mileage) *10) /10)
@@ -22,10 +25,14 @@ class Car:
         miles_left = self.mileage * self.fuel_level
         if  miles < miles_left:
             self.odometer += miles
+            self.fuel_level -= (miles / self.mileage)
             return (f"{(self.odometer) *10 /10} miles added to the odometer!") 
         elif miles >= miles_left:
             self.odometer += miles_left
-            return (f"{(miles_left) *10 /10} miles added to the odometer! OUT OF GAS")
+            self.fuel_level -= (miles_left / self.mileage)
+            return (f"{(miles_left) *10 /10} miles added to the odometer! OUT OF GAS! Must Refuel!")
+        #elif self.fuel_level <= 0:
+        #    return (f"Fuel tank is empty! Must refuel!")
     
 def car_run(car):
     i = input("What would you like to do? Drive + miles, Refuel + gallons, Range, Exit?")
@@ -40,6 +47,7 @@ def car_run(car):
         else:
             print("Re-enter input!")
         print(f'Odometer: {bob.odometer}')
+        print(f'Fuel level: {bob.fuel_level}')
         i = input("What would you like to do? Drive + miles, Refuel + gallons, Range, Exit?")
         a = i.split()
         
